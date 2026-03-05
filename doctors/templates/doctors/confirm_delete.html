@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% block title %}Delete Doctor{% endblock %}
+{% block page_title %}Delete Doctor{% endblock %}
+{% block content %}
+<div style="max-width:500px;margin:0 auto;">
+  <div class="card">
+    <div class="card-header"><span class="card-title" style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i> Confirm Delete</span></div>
+    <div class="card-body">
+      <p style="margin-bottom:24px;">Are you sure you want to delete <strong>{{ doctor.full_name }}</strong>?</p>
+      <form method="POST" style="display:flex;gap:12px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Yes, Delete</button>
+        <a href="{% url 'doctor_list' %}" class="btn btn-outline">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

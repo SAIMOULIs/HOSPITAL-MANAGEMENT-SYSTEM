@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% block title %}Doctors — MediCare HMS{% endblock %}
+{% block page_title %}Doctors{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2>Medical Staff</h2><p>Manage doctors and specialists</p></div>
+  <div style="display:flex;gap:10px;">
+    <a href="{% url 'department_list' %}" class="btn btn-outline"><i class="fas fa-hospital"></i> Departments</a>
+    <a href="{% url 'doctor_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Doctor</a>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header">
+    <form method="GET" class="search-bar">
+      <div style="position:relative;">
+        <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);"></i>
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by name or specialization..." style="padding-left:38px;">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    </form>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Department</th><th>Specialization</th><th>Experience</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for d in doctors %}
+        <tr>
+          <td><a href="{% url 'doctor_detail' d.pk %}" style="color:var(--primary);font-weight:600;">{{ d.full_name }}</a></td>
+          <td>{{ d.department.name|default:"—" }}</td>
+          <td>{{ d.specialization }}</td>
+          <td>{{ d.experience }} yrs</td>
+          <td><span class="badge {% if d.available %}badge-available{% else %}badge-unavailable{% endif %}">{% if d.available %}Available{% else %}Unavailable{% endif %}</span></td>
+          <td>
+            <a href="{% url 'doctor_edit' d.pk %}" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></a>
+            <a href="{% url 'doctor_delete' d.pk %}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">No doctors found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

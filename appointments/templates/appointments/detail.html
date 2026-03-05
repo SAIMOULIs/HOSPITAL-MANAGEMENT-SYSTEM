@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+{% block title %}Appointment #{{ appt.pk }} — MediCare HMS{% endblock %}
+{% block page_title %}Appointment Detail{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Appointment #{{ appt.pk }}</h2>
+    <p><span class="badge badge-{{ appt.status }}">{{ appt.get_status_display }}</span></p>
+  </div>
+  <div style="display:flex;gap:10px;">
+    {% if appt.status != 'completed' %}
+    <a href="{% url 'add_medical_record' appt.pk %}" class="btn btn-success"><i class="fas fa-notes-medical"></i> Add Record</a>
+    {% endif %}
+    <a href="{% url 'appointment_edit' appt.pk %}" class="btn btn-outline"><i class="fas fa-edit"></i> Edit</a>
+    <a href="{% url 'appointment_list' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Appointment Info</span></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="detail-item"><label>Patient</label><p><a href="{% url 'patient_detail' appt.patient.pk %}" style="color:var(--primary)">{{ appt.patient.full_name }}</a></p></div>
+        <div class="detail-item"><label>Doctor</label><p>{{ appt.doctor.full_name }}</p></div>
+        <div class="detail-item"><label>Date & Time</label><p>{{ appt.appointment_date }} at {{ appt.appointment_time }}</p></div>
+        <div class="detail-item"><label>Status</label><p><span class="badge badge-{{ appt.status }}">{{ appt.get_status_display }}</span></p></div>
+        <div class="detail-item"><label>Reason</label><p>{{ appt.reason }}</p></div>
+        {% if appt.notes %}<div class="detail-item"><label>Notes</label><p>{{ appt.notes }}</p></div>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if record %}
+  <div class="card">
+    <div class="card-header"><span class="card-title"><i class="fas fa-file-medical" style="color:var(--accent2)"></i> Medical Record</span></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="detail-item"><label>Diagnosis</label><p>{{ record.diagnosis }}</p></div>
+        <div class="detail-item"><label>Prescription</label><p>{{ record.prescription }}</p></div>
+        <div class="detail-item"><label>Consultation Fee</label><p style="font-size:1.2rem;font-weight:700;color:var(--primary);">₹{{ record.fee }}</p></div>
+        <div class="detail-item"><label>Recorded</label><p>{{ record.created_at|date:"d M Y, H:i" }}</p></div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card" style="display:flex;align-items:center;justify-content:center;min-height:200px;">
+    <div style="text-align:center;color:var(--muted);">
+      <i class="fas fa-file-medical" style="font-size:2.5rem;opacity:.3;margin-bottom:12px;display:block;"></i>
+      <p>No medical record yet.</p>
+      {% if appt.status != 'completed' %}
+      <a href="{% url 'add_medical_record' appt.pk %}" class="btn btn-success" style="margin-top:12px;"><i class="fas fa-plus"></i> Add Record</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+{% block title %}Appointments — MediCare HMS{% endblock %}
+{% block page_title %}Appointments{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2>Appointments</h2><p>View and manage all appointments</p></div>
+  <a href="{% url 'appointment_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Book Appointment</a>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-body" style="padding:16px 24px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="{% url 'appointment_list' %}" class="btn {% if not status %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All</a>
+      <a href="?status=pending"   class="btn {% if status == 'pending' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Pending</a>
+      <a href="?status=confirmed" class="btn {% if status == 'confirmed' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Confirmed</a>
+      <a href="?status=completed" class="btn {% if status == 'completed' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Completed</a>
+      <a href="?status=cancelled" class="btn {% if status == 'cancelled' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Cancelled</a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for a in appointments %}
+        <tr>
+          <td style="color:var(--muted);">#{{ a.pk }}</td>
+          <td><a href="{% url 'patient_detail' a.patient.pk %}" style="color:var(--primary);font-weight:600;">{{ a.patient.full_name }}</a></td>
+          <td>{{ a.doctor.full_name }}</td>
+          <td>{{ a.appointment_date }}</td>
+          <td>{{ a.appointment_time }}</td>
+          <td>{{ a.reason|truncatechars:30 }}</td>
+          <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+          <td style="display:flex;gap:6px;">
+            <a href="{% url 'appointment_detail' a.pk %}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></a>
+            <a href="{% url 'appointment_edit' a.pk %}" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px;">No appointments found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ doctor.full_name }} — MediCare HMS{% endblock %}
+{% block page_title %}Doctor Detail{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2>{{ doctor.full_name }}</h2><p>{{ doctor.specialization }}</p></div>
+  <div style="display:flex;gap:10px;">
+    <a href="{% url 'doctor_edit' doctor.pk %}" class="btn btn-outline"><i class="fas fa-edit"></i> Edit</a>
+    <a href="{% url 'doctor_list' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 2fr;gap:24px;">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Doctor Info</span></div>
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="detail-item"><label>Name</label><p>{{ doctor.full_name }}</p></div>
+        <div class="detail-item"><label>Department</label><p>{{ doctor.department.name|default:"—" }}</p></div>
+        <div class="detail-item"><label>Specialization</label><p>{{ doctor.specialization }}</p></div>
+        <div class="detail-item"><label>Experience</label><p>{{ doctor.experience }} years</p></div>
+        <div class="detail-item"><label>Phone</label><p>{{ doctor.phone }}</p></div>
+        <div class="detail-item"><label>Email</label><p>{{ doctor.email }}</p></div>
+        <div class="detail-item"><label>Status</label><p><span class="badge {% if doctor.available %}badge-available{% else %}badge-unavailable{% endif %}">{% if doctor.available %}Available{% else %}Unavailable{% endif %}</span></p></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Recent Appointments</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Patient</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for a in appointments %}
+          <tr>
+            <td>{{ a.patient.full_name }}</td>
+            <td>{{ a.appointment_date }}</td>
+            <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:32px;">No appointments.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

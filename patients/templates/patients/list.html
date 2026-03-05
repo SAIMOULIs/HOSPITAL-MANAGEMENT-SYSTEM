@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% block title %}Patients — MediCare HMS{% endblock %}
+{% block page_title %}Patients{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Patient Records</h2>
+    <p>Manage all registered patients</p>
+  </div>
+  <a href="{% url 'patient_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Patient</a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <form method="GET" class="search-bar">
+      <div style="position:relative;">
+        <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);"></i>
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by name..." style="padding-left:38px;">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Search</button>
+      {% if q %}<a href="{% url 'patient_list' %}" class="btn btn-outline btn-sm">Clear</a>{% endif %}
+    </form>
+    <span style="color:var(--muted);font-size:.85rem;">{{ patients|length }} patients</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Gender</th><th>Blood Group</th><th>Phone</th><th>Registered</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for p in patients %}
+        <tr>
+          <td><a href="{% url 'patient_detail' p.pk %}" style="color:var(--primary);font-weight:600;">{{ p.full_name }}</a></td>
+          <td>{{ p.get_gender_display }}</td>
+          <td><span class="badge badge-confirmed">{{ p.blood_group }}</span></td>
+          <td>{{ p.phone }}</td>
+          <td>{{ p.created_at|date:"d M Y" }}</td>
+          <td>
+            <a href="{% url 'patient_edit' p.pk %}" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></a>
+            <a href="{% url 'patient_delete' p.pk %}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">No patients found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard — MediCare HMS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Welcome back, {{ user.username }} 👋</h2>
+    <p>Here's what's happening at the hospital today.</p>
+  </div>
+  <a href="{% url 'appointment_add' %}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> New Appointment
+  </a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card blue">
+    <div class="stat-icon"><i class="fas fa-users"></i></div>
+    <div class="stat-value">{{ total_patients }}</div>
+    <div class="stat-label">Total Patients</div>
+  </div>
+  <div class="stat-card cyan">
+    <div class="stat-icon"><i class="fas fa-user-md"></i></div>
+    <div class="stat-value">{{ total_doctors }}</div>
+    <div class="stat-label">Total Doctors</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+    <div class="stat-value">{{ today_appointments }}</div>
+    <div class="stat-label">Today's Appointments</div>
+  </div>
+  <div class="stat-card yellow">
+    <div class="stat-icon"><i class="fas fa-hospital"></i></div>
+    <div class="stat-value">{{ departments }}</div>
+    <div class="stat-label">Departments</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-clock" style="color:var(--accent)"></i> Recent Appointments</span>
+      <a href="{% url 'appointment_list' %}" class="btn btn-outline btn-sm">View All</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in recent_appointments %}
+          <tr>
+            <td><a href="{% url 'appointment_detail' a.pk %}" style="color:var(--primary);font-weight:600;">{{ a.patient.full_name }}</a></td>
+            <td>{{ a.doctor.full_name }}</td>
+            <td>{{ a.appointment_date }}</td>
+            <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">No appointments yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Appointment Status</span></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:.85rem;font-weight:600;">Pending</span>
+              <span style="font-size:.85rem;color:var(--muted);">{{ pending }}</span>
+            </div>
+            <div style="background:var(--border);border-radius:8px;height:8px;">
+              <div style="background:#f9c74f;height:8px;border-radius:8px;width:{% if total_appointments %}{% widthratio pending total_appointments 100 %}%{% else %}0%{% endif %}"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:.85rem;font-weight:600;">Completed</span>
+              <span style="font-size:.85rem;color:var(--muted);">{{ completed }}</span>
+            </div>
+            <div style="background:var(--border);border-radius:8px;height:8px;">
+              <div style="background:var(--accent2);height:8px;border-radius:8px;width:{% if total_appointments %}{% widthratio completed total_appointments 100 %}%{% else %}0%{% endif %}"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">Quick Actions</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+        <a href="{% url 'patient_add' %}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add Patient</a>
+        <a href="{% url 'doctor_add' %}" class="btn btn-accent"><i class="fas fa-user-md"></i> Add Doctor</a>
+        <a href="{% url 'appointment_add' %}" class="btn btn-success"><i class="fas fa-calendar-plus"></i> Book Appointment</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
